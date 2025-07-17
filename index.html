@@ -1,21 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Modern Favicon (SVG) -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' class='w-6 h-6'%3E%3Cpath fill-rule='evenodd' d='M9 4.5a.75.75 0 01.75.75v13.5a.75.75 0 01-1.5 0V5.25A.75.75 0 019 4.5zm7.5 0a.75.75 0 01.75.75v13.5a.75.75 0 01-1.5 0V5.25A.75.75 0 0116.5 4.5z' /%3E%3Cpath d='M3 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75zm0 4.5a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75zm0 4.5a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75zm0 4.5a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z' /%3E%3C/svg%3E%0A">
     <title>FICO Score Simulator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Initial Theme Load to prevent FOUC (Flash of Unstyled Content) -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
-        .card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            padding: 1.5rem;
+        /* Custom gradient button style */
+        .btn-gradient {
+            background-image: linear-gradient(to right, #4f46e5, #7c3aed);
             transition: all 0.3s ease;
+        }
+        .btn-gradient:hover {
+            box-shadow: 0 10px 20px -10px rgba(124, 58, 237, 0.5);
+            transform: translateY(-2px);
         }
         .score-circle {
             width: 180px;
@@ -27,90 +41,100 @@
             align-items: center;
             transition: border-color 0.5s ease;
         }
+        /* Smooth transitions for all color changes */
+        * {
+           transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
 
     <div class="container mx-auto p-4 md:p-8 max-w-6xl">
         
-        <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">FICO Score Simulator</h1>
-            <p class="text-gray-600 mt-2">An expert system to evaluate financial data and calculate a credit score.</p>
+        <header class="text-center mb-8 relative">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">FICO Score Simulator</h1>
+            <p class="text-slate-600 dark:text-slate-400 mt-2">An expert system to evaluate financial data and calculate a credit score.</p>
+            
+            <!-- Theme Toggle Button -->
+            <button id="theme-toggle" class="absolute top-0 right-0 p-2 rounded-full text-slate-500 dark:text-yellow-400 hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none">
+                <svg id="theme-toggle-dark-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 10.607a1 1 0 011.414 0l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM3 11a1 1 0 100-2H2a1 1 0 100 2h1z"></path></svg>
+            </button>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
             <!-- Input Column -->
-            <div class="flex flex-col gap-6">
+            <section class="flex flex-col gap-6">
                 <!-- Profiles Card -->
-                <div class="card">
-                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">Load Applicant Profile</h2>
-                    <p class="text-sm text-gray-500 mb-4">Select a pre-defined profile to auto-fill the form and see the calculation.</p>
+                <div class="bg-white dark:bg-slate-800/50 dark:border dark:border-slate-700 rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-4 border-b border-slate-200 dark:border-slate-700 pb-2 text-slate-900 dark:text-white">Load Applicant Profile</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Select a pre-defined profile to auto-fill the form and see the calculation.</p>
                     <div id="profile-buttons" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                         <button data-profile="Priya" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition">Priya</button>
-                         <button data-profile="Rohan" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition">Rohan</button>
-                         <button data-profile="Sunita" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition">Sunita</button>
+                         <button data-profile="Priya" class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg">Priya</button>
+                         <button data-profile="Rohan" class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg">Rohan</button>
+                         <button data-profile="Sunita" class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg">Sunita</button>
                     </div>
                 </div>
 
                 <!-- Manual Input Card -->
-                <div class="card">
-                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">Applicant Details</h2>
+                <div class="bg-white dark:bg-slate-800/50 dark:border dark:border-slate-700 rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-4 border-b border-slate-200 dark:border-slate-700 pb-2 text-slate-900 dark:text-white">Applicant Details</h2>
                     <form id="fico-form" class="space-y-4">
                         <div>
-                            <label for="late_payments" class="block text-sm font-medium text-gray-700">Number of Late Payments</label>
-                            <input type="number" id="late_payments" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 1">
+                            <label for="late_payments" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Number of Late Payments</label>
+                            <input type="number" id="late_payments" class="mt-1 block w-full rounded-md bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 1">
                         </div>
                         <div>
-                            <label for="history_len" class="block text-sm font-medium text-gray-700">Credit History Length (years)</label>
-                            <input type="number" id="history_len" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 5">
+                            <label for="history_len" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Credit History Length (years)</label>
+                            <input type="number" id="history_len" class="mt-1 block w-full rounded-md bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 5">
                         </div>
                         <div>
-                            <label for="limit" class="block text-sm font-medium text-gray-700">Total Credit Limit</label>
-                            <input type="number" id="limit" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 50000">
+                            <label for="limit" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Total Credit Limit</label>
+                            <input type="number" id="limit" class="mt-1 block w-full rounded-md bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 50000">
                         </div>
                         <div>
-                            <label for="balance" class="block text-sm font-medium text-gray-700">Total Credit Balance</label>
-                            <input type="number" id="balance" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 10000">
+                            <label for="balance" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Total Credit Balance</label>
+                            <input type="number" id="balance" class="mt-1 block w-full rounded-md bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 10000">
                         </div>
                          <div>
-                            <label for="inquiries" class="block text-sm font-medium text-gray-700">New Inquiries (last 2 years)</label>
-                            <input type="number" id="inquiries" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 0">
+                            <label for="inquiries" class="block text-sm font-medium text-slate-700 dark:text-slate-300">New Inquiries (last 2 years)</label>
+                            <input type="number" id="inquiries" class="mt-1 block w-full rounded-md bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 0">
                         </div>
                         <div class="flex items-center justify-between pt-2">
                              <div class="flex items-center">
-                                <input id="recent_late" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                                <label for="recent_late" class="ml-2 block text-sm text-gray-900">Late payment in last 6 months?</label>
+                                <input id="recent_late" type="checkbox" class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-900">
+                                <label for="recent_late" class="ml-2 block text-sm text-slate-900 dark:text-slate-300">Late payment in last 6 months?</label>
                             </div>
                              <div class="flex items-center">
-                                <input id="mix" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                                <label for="mix" class="ml-2 block text-sm text-gray-900">Has a mix of credit types?</label>
+                                <input id="mix" type="checkbox" class="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-slate-900">
+                                <label for="mix" class="ml-2 block text-sm text-slate-900 dark:text-slate-300">Has a mix of credit types?</label>
                             </div>
                         </div>
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition text-lg">Calculate Score</button>
+                        <button type="submit" class="w-full btn-gradient text-white font-bold py-3 px-4 rounded-lg text-lg mt-4">Calculate Score</button>
                     </form>
                 </div>
-            </div>
+            </section>
 
             <!-- Results Column -->
-            <div class="card" id="results-card">
+            <section class="bg-white dark:bg-slate-800/50 dark:border dark:border-slate-700 rounded-xl shadow-md p-6" id="results-card">
                 <div class="text-center">
-                    <h2 class="text-xl font-semibold mb-4">Your Score</h2>
-                    <div id="score-display" class="mx-auto score-circle border-8 border-gray-200">
-                        <span id="score-value" class="text-5xl font-bold text-gray-800">---</span>
-                        <span id="score-rating" class="text-lg font-semibold text-gray-500">Enter data to see score</span>
+                    <h2 class="text-xl font-semibold mb-4 text-slate-900 dark:text-white">Your Score</h2>
+                    <div id="score-display" class="mx-auto score-circle border-8 border-slate-200 dark:border-slate-700">
+                        <span id="score-value" class="text-5xl font-bold text-slate-800 dark:text-slate-100">---</span>
+                        <span id="score-rating" class="text-lg font-semibold text-slate-500 dark:text-slate-400">Enter data to see score</span>
                     </div>
                 </div>
 
-                <div id="breakdown-section" class="mt-8 hidden">
-                    <h3 class="text-lg font-semibold text-center mb-4 border-t pt-6">How Your Score Was Calculated</h3>
+                <div id="breakdown-section" class="mt-8 opacity-0 transition-opacity duration-500">
+                    <h3 class="text-lg font-semibold text-center mb-4 border-t border-slate-200 dark:border-slate-700 pt-6 text-slate-900 dark:text-white">How Your Score Was Calculated</h3>
                     <div id="breakdown-list" class="space-y-3">
                         <!-- Breakdown items will be injected here by JavaScript -->
                     </div>
                 </div>
-            </div>
+            </section>
 
-        </div>
+        </main>
     </div>
 
     <script>
@@ -122,7 +146,6 @@
         };
 
         // --- FICO Scoring Logic (The Inference Engine) ---
-        // This logic is now updated to match the PDF examples precisely.
         const calculatePaymentHistoryScore = (num, recent) => {
             if (recent) return 40;
             if (num === 0) return 200;
@@ -132,12 +155,11 @@
         const calculateAmountsOwedScore = (limit, balance) => {
             if (limit === 0) return 0;
             const utilization = (balance / limit) * 100;
-            // Corrected logic to match PDF examples for Priya (10%), Sunita (~50%), and Rohan (80%)
-            if (utilization <= 10) return 170; // Priya gets full points
-            if (utilization <= 30) return 140; // Intermediate step
-            if (utilization <= 50) return 85;  // Sunita gets half points
-            if (utilization <= 70) return 50;  // Intermediate step
-            return 15; // Rohan gets very few points
+            if (utilization <= 10) return 170;
+            if (utilization <= 30) return 140;
+            if (utilization <= 50) return 85;
+            if (utilization <= 70) return 50;
+            return 15;
         };
         const calculateHistoryLengthScore = (years) => {
             if (years >= 20) return 85;
@@ -154,8 +176,8 @@
         const calculateCreditMixScore = (hasMix) => hasMix ? 55 : 30;
 
         const getScoreRating = (score) => {
-            if (score >= 800) return { rating: "Excellent", color: "border-green-500", textColor: "text-green-600" };
-            if (score >= 740) return { rating: "Very Good", color: "border-lime-500", textColor: "text-lime-600" };
+            if (score >= 800) return { rating: "Excellent", color: "border-green-500", textColor: "text-green-500" };
+            if (score >= 740) return { rating: "Very Good", color: "border-lime-500", textColor: "text-lime-500" };
             if (score >= 670) return { rating: "Good", color: "border-yellow-400", textColor: "text-yellow-500" };
             if (score >= 580) return { rating: "Fair", color: "border-orange-500", textColor: "text-orange-600" };
             return { rating: "Poor", color: "border-red-500", textColor: "text-red-600" };
@@ -169,6 +191,32 @@
         const scoreDisplayEl = document.getElementById('score-display');
         const breakdownSection = document.getElementById('breakdown-section');
         const breakdownList = document.getElementById('breakdown-list');
+        const themeToggleButton = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        // --- Theme Switcher Logic ---
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                darkIcon.classList.add('hidden');
+                lightIcon.classList.remove('hidden');
+            }
+        }
+        
+        themeToggleButton.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            const newTheme = isDark ? 'dark' : 'light';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+        
+        // Apply theme on initial load
+        applyTheme(localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
 
         // --- Event Listeners ---
         form.addEventListener('submit', (e) => {
@@ -186,7 +234,7 @@
             }
         });
 
-        // --- Functions ---
+        // --- Main Functions ---
         function populateForm(name) {
             const data = applicantData[name];
             document.getElementById('late_payments').value = data.late_payments;
@@ -199,7 +247,7 @@
         }
 
         function calculateAndDisplay() {
-            // 1. Gather facts from the UI
+            // 1. Gather facts
             const num_late = parseInt(document.getElementById('late_payments').value) || 0;
             const history_len = parseInt(document.getElementById('history_len').value) || 0;
             const limit = parseFloat(document.getElementById('limit').value) || 0;
@@ -209,8 +257,6 @@
             const has_mix = document.getElementById('mix').checked;
 
             if (limit < balance) {
-                // Using a custom modal/alert in a real app would be better.
-                // For this example, browser alert is sufficient.
                 alert("Error: Total Balance cannot be greater than Total Credit Limit.");
                 return;
             }
@@ -244,14 +290,14 @@
             breakdownList.innerHTML = ''; // Clear previous results
             for (const [category, points] of Object.entries(breakdown)) {
                 const item = document.createElement('div');
-                item.className = 'flex justify-between items-center bg-gray-100 p-3 rounded-md';
+                item.className = 'flex justify-between items-center bg-slate-100 dark:bg-slate-700/50 p-3 rounded-md';
                 item.innerHTML = `
-                    <span class="font-medium">${category}</span>
-                    <span class="font-bold text-gray-700">+${points} pts</span>
+                    <span class="font-medium text-slate-700 dark:text-slate-300">${category}</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-100">+${points} pts</span>
                 `;
                 breakdownList.appendChild(item);
             }
-            breakdownSection.classList.remove('hidden');
+            breakdownSection.classList.remove('opacity-0');
         }
     </script>
 </body>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FICO Score Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: border-color 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">FICO Score Simulator</h1>
+            <p class="text-gray-600 mt-2">An expert system to evaluate financial data and calculate a credit score.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <!-- Input Column -->
+            <div class="flex flex-col gap-6">
+                <!-- Profiles Card -->
+                <div class="card">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">Load Applicant Profile</h2>
+                    <p class="text-sm text-gray-500 mb-4">Select a pre-defined profile to auto-fill the form and see the calculation.</p>
+                    <div id="profile-buttons" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                         <button data-profile="Priya" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition">Priya</button>
+                         <button data-profile="Rohan" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition">Rohan</button>
+                         <button data-profile="Sunita" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition">Sunita</button>
+                    </div>
+                </div>
+
+                <!-- Manual Input Card -->
+                <div class="card">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">Applicant Details</h2>
+                    <form id="fico-form" class="space-y-4">
+                        <div>
+                            <label for="late_payments" class="block text-sm font-medium text-gray-700">Number of Late Payments</label>
+                            <input type="number" id="late_payments" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 1">
+                        </div>
+                        <div>
+                            <label for="history_len" class="block text-sm font-medium text-gray-700">Credit History Length (years)</label>
+                            <input type="number" id="history_len" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 5">
+                        </div>
+                        <div>
+                            <label for="limit" class="block text-sm font-medium text-gray-700">Total Credit Limit</label>
+                            <input type="number" id="limit" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 50000">
+                        </div>
+                        <div>
+                            <label for="balance" class="block text-sm font-medium text-gray-700">Total Credit Balance</label>
+                            <input type="number" id="balance" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 10000">
+                        </div>
+                         <div>
+                            <label for="inquiries" class="block text-sm font-medium text-gray-700">New Inquiries (last 2 years)</label>
+                            <input type="number" id="inquiries" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2" placeholder="e.g., 0">
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                             <div class="flex items-center">
+                                <input id="recent_late" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                <label for="recent_late" class="ml-2 block text-sm text-gray-900">Late payment in last 6 months?</label>
+                            </div>
+                             <div class="flex items-center">
+                                <input id="mix" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                <label for="mix" class="ml-2 block text-sm text-gray-900">Has a mix of credit types?</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition text-lg">Calculate Score</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Column -->
+            <div class="card" id="results-card">
+                <div class="text-center">
+                    <h2 class="text-xl font-semibold mb-4">Your Score</h2>
+                    <div id="score-display" class="mx-auto score-circle border-8 border-gray-200">
+                        <span id="score-value" class="text-5xl font-bold text-gray-800">---</span>
+                        <span id="score-rating" class="text-lg font-semibold text-gray-500">Enter data to see score</span>
+                    </div>
+                </div>
+
+                <div id="breakdown-section" class="mt-8 hidden">
+                    <h3 class="text-lg font-semibold text-center mb-4 border-t pt-6">How Your Score Was Calculated</h3>
+                    <div id="breakdown-list" class="space-y-3">
+                        <!-- Breakdown items will be injected here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- Applicant Data ---
+        const applicantData = {
+            "Priya": { late_payments: 0, recent_late: false, history_len: 3, limit: 100000, balance: 10000, inquiries: 0, mix: false },
+            "Rohan": { late_payments: 1, recent_late: false, history_len: 20, limit: 500000, balance: 400000, inquiries: 1, mix: true },
+            "Sunita": { late_payments: 3, recent_late: true, history_len: 10, limit: 200000, balance: 100000, inquiries: 3, mix: true },
+        };
+
+        // --- FICO Scoring Logic (The Inference Engine) ---
+        // This logic is now updated to match the PDF examples precisely.
+        const calculatePaymentHistoryScore = (num, recent) => {
+            if (recent) return 40;
+            if (num === 0) return 200;
+            if (num === 1) return 120;
+            return 60;
+        };
+        const calculateAmountsOwedScore = (limit, balance) => {
+            if (limit === 0) return 0;
+            const utilization = (balance / limit) * 100;
+            // Corrected logic to match PDF examples for Priya (10%), Sunita (~50%), and Rohan (80%)
+            if (utilization <= 10) return 170; // Priya gets full points
+            if (utilization <= 30) return 140; // Intermediate step
+            if (utilization <= 50) return 85;  // Sunita gets half points
+            if (utilization <= 70) return 50;  // Intermediate step
+            return 15; // Rohan gets very few points
+        };
+        const calculateHistoryLengthScore = (years) => {
+            if (years >= 20) return 85;
+            if (years >= 10) return 65;
+            if (years >= 5) return 40;
+            if (years >= 2) return 20;
+            return 10;
+        };
+        const calculateNewCreditScore = (inquiries) => {
+            if (inquiries === 0) return 55;
+            if (inquiries <= 2) return 35;
+            return 10;
+        };
+        const calculateCreditMixScore = (hasMix) => hasMix ? 55 : 30;
+
+        const getScoreRating = (score) => {
+            if (score >= 800) return { rating: "Excellent", color: "border-green-500", textColor: "text-green-600" };
+            if (score >= 740) return { rating: "Very Good", color: "border-lime-500", textColor: "text-lime-600" };
+            if (score >= 670) return { rating: "Good", color: "border-yellow-400", textColor: "text-yellow-500" };
+            if (score >= 580) return { rating: "Fair", color: "border-orange-500", textColor: "text-orange-600" };
+            return { rating: "Poor", color: "border-red-500", textColor: "text-red-600" };
+        };
+
+        // --- DOM Elements ---
+        const form = document.getElementById('fico-form');
+        const profileButtons = document.getElementById('profile-buttons');
+        const scoreValueEl = document.getElementById('score-value');
+        const scoreRatingEl = document.getElementById('score-rating');
+        const scoreDisplayEl = document.getElementById('score-display');
+        const breakdownSection = document.getElementById('breakdown-section');
+        const breakdownList = document.getElementById('breakdown-list');
+
+        // --- Event Listeners ---
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            calculateAndDisplay();
+        });
+
+        profileButtons.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                const profileName = e.target.dataset.profile;
+                if (profileName) {
+                    populateForm(profileName);
+                    calculateAndDisplay();
+                }
+            }
+        });
+
+        // --- Functions ---
+        function populateForm(name) {
+            const data = applicantData[name];
+            document.getElementById('late_payments').value = data.late_payments;
+            document.getElementById('history_len').value = data.history_len;
+            document.getElementById('limit').value = data.limit;
+            document.getElementById('balance').value = data.balance;
+            document.getElementById('inquiries').value = data.inquiries;
+            document.getElementById('recent_late').checked = data.recent_late;
+            document.getElementById('mix').checked = data.mix;
+        }
+
+        function calculateAndDisplay() {
+            // 1. Gather facts from the UI
+            const num_late = parseInt(document.getElementById('late_payments').value) || 0;
+            const history_len = parseInt(document.getElementById('history_len').value) || 0;
+            const limit = parseFloat(document.getElementById('limit').value) || 0;
+            const balance = parseFloat(document.getElementById('balance').value) || 0;
+            const inquiries = parseInt(document.getElementById('inquiries').value) || 0;
+            const recent_late = document.getElementById('recent_late').checked;
+            const has_mix = document.getElementById('mix').checked;
+
+            if (limit < balance) {
+                // Using a custom modal/alert in a real app would be better.
+                // For this example, browser alert is sufficient.
+                alert("Error: Total Balance cannot be greater than Total Credit Limit.");
+                return;
+            }
+
+            // 2. Apply rules
+            const scores = {
+                "Payment History": calculatePaymentHistoryScore(num_late, recent_late),
+                "Credit Utilization": calculateAmountsOwedScore(limit, balance),
+                "Length of History": calculateHistoryLengthScore(history_len),
+                "New Credit Inquiries": calculateNewCreditScore(inquiries),
+                "Credit Mix": calculateCreditMixScore(has_mix)
+            };
+
+            // 3. Calculate final score
+            const finalScore = 300 + Object.values(scores).reduce((a, b) => a + b, 0);
+
+            // 4. Display results
+            displayResults(finalScore, scores);
+        }
+
+        function displayResults(score, breakdown) {
+            const { rating, color, textColor } = getScoreRating(score);
+
+            // Update score circle
+            scoreValueEl.textContent = score;
+            scoreRatingEl.textContent = rating;
+            scoreRatingEl.className = `text-lg font-semibold ${textColor}`;
+            scoreDisplayEl.className = `mx-auto score-circle border-8 ${color}`;
+
+            // Update and show breakdown
+            breakdownList.innerHTML = ''; // Clear previous results
+            for (const [category, points] of Object.entries(breakdown)) {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center bg-gray-100 p-3 rounded-md';
+                item.innerHTML = `
+                    <span class="font-medium">${category}</span>
+                    <span class="font-bold text-gray-700">+${points} pts</span>
+                `;
+                breakdownList.appendChild(item);
+            }
+            breakdownSection.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

@@ -135,6 +135,13 @@
             </section>
 
         </main>
+
+        <footer class="text-center py-8">
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+                Made with &hearts; by Astha, Atish, Gyanesh, Stanya
+            </p>
+        </footer>
+
     </div>
 
     <script>
@@ -195,28 +202,29 @@
         const darkIcon = document.getElementById('theme-toggle-dark-icon');
         const lightIcon = document.getElementById('theme-toggle-light-icon');
 
-        // --- Theme Switcher Logic ---
-        function applyTheme(theme) {
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
+        // --- Theme Switcher Logic (FIXED) ---
+        function updateThemeIcons() {
+            if (document.documentElement.classList.contains('dark')) {
                 darkIcon.classList.remove('hidden');
                 lightIcon.classList.add('hidden');
             } else {
-                document.documentElement.classList.remove('dark');
                 darkIcon.classList.add('hidden');
                 lightIcon.classList.remove('hidden');
             }
         }
-        
+
         themeToggleButton.addEventListener('click', () => {
-            const isDark = document.documentElement.classList.toggle('dark');
-            const newTheme = isDark ? 'dark' : 'light';
+            // 1. Toggle the class on the root element.
+            document.documentElement.classList.toggle('dark');
+            // 2. Update localStorage with the new state.
+            const newTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
             localStorage.setItem('theme', newTheme);
-            applyTheme(newTheme);
+            // 3. Update the button icon to match.
+            updateThemeIcons();
         });
-        
-        // Apply theme on initial load
-        applyTheme(localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+
+        // On initial page load, sync the icon with the theme that was set by the <head> script.
+        updateThemeIcons();
 
         // --- Event Listeners ---
         form.addEventListener('submit', (e) => {

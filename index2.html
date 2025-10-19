@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' class='w-6 h-6'%3E%3Cpath d='M12 2.25a.75.75 0 01.75.75v.54l1.163-.39a.75.75 0 01.832.832l-.39 1.163h.54a.75.75 0 010 1.5h-.54l.39 1.163a.75.75 0 01-.832.832l-1.163-.39v.54a.75.75 0 01-1.5 0v-.54l-1.163.39a.75.75 0 01-.832-.832l.39-1.163h-.54a.75.75 0 010-1.5h.54l-.39-1.163a.75.75 0 01.832-.832l1.163.39v-.54A.75.75 0 0112 2.25zM4.5 10.5a.75.75 0 01.75-.75h13.5a.75.75 0 010 1.5H5.25a.75.75 0 01-.75-.75zm0 4.5a.75.75 0 01.75-.75h13.5a.75.75 0 010 1.5H5.25a.75.75 0 01-.75-.75zm0 4.5a.75.75 0 01.75-.75h13.5a.75.75 0 010 1.5H5.25a.75.75 0 01-.75-.75z' /%3E%3C/svg%3E%0A">
+    <title>SECI Knowledge Cycle Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        * {
+           transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        .btn-gradient {
+            background-image: linear-gradient(to right, #4f46e5, #7c3aed);
+            transition: all 0.3s ease;
+        }
+        .btn-gradient:hover {
+            box-shadow: 0 10px 20px -10px rgba(124, 58, 237, 0.5);
+            transform: translateY(-2px);
+        }
+        .app-view {
+            display: none;
+        }
+        .app-view.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        
+        <header class="text-center mb-6 relative">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">SECI Knowledge Management System</h1>
+            <p class="text-slate-600 dark:text-slate-400 mt-2">A simulation of the knowledge creation spiral.</p>
+            
+            <button id="theme-toggle" class="absolute top-0 right-0 p-2 rounded-full text-slate-500 dark:text-yellow-400 hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none">
+                <svg id="theme-toggle-dark-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 10.607a1 1 0 011.414 0l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM3 11a1 1 0 100-2H2a1 1 0 100 2h1z"></path></svg>
+            </button>
+        </header>
+
+        <!-- Main Navigation -->
+        <nav class="flex justify-center mb-8 border-b border-slate-300 dark:border-slate-700">
+            <button data-view="simulator" class="nav-btn font-semibold py-2 px-4 border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400">SECI Cycle Simulator</button>
+            <button data-view="knowledge-base" class="nav-btn font-semibold py-2 px-4 border-b-2 border-transparent text-slate-500 dark:text-slate-400">View Knowledge Base</button>
+        </nav>
+
+        <!-- SECI Simulator View -->
+        <main id="simulator-view" class="app-view active">
+            <div class="space-y-8">
+                <!-- Phase 0: Start -->
+                <section id="phase-start" class="seci-phase active">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-semibold mb-2 text-slate-900 dark:text-white">Start the Knowledge Spiral</h2>
+                        <p class="text-slate-600 dark:text-slate-400 mb-4">Begin with a single piece of unstated, personal knowledge (tacit knowledge). This could be an idea, an observation, or a gut feeling from a recent project.</p>
+                        <label for="tacit-input" class="font-medium text-sm text-slate-700 dark:text-slate-300">Your Tacit Knowledge Input:</label>
+                        <textarea id="tacit-input" class="mt-1 w-full rounded-md bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 shadow-sm p-2" rows="3" placeholder="e.g., 'Our client onboarding feels too slow.'"></textarea>
+                        <button id="start-discussion-btn" class="w-full btn-gradient text-white font-bold py-2 px-4 rounded-lg text-lg mt-4">Start Discussion (Socialization)</button>
+                    </div>
+                </section>
+
+                <!-- Other phases will be dynamically shown -->
+            </div>
+        </main>
+        
+        <!-- Knowledge Base View -->
+        <main id="knowledge-base-view" class="app-view">
+             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-semibold mb-4 text-slate-900 dark:text-white">Explicit Knowledge Base</h2>
+                <div id="kb-list" class="space-y-4">
+                    <!-- Knowledge items will be populated here -->
+                </div>
+            </div>
+        </main>
+
+        <footer class="text-center pt-8 mt-8 border-t border-slate-200 dark:border-slate-700">
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+                Made with &hearts; by Astha, Atish, Gyanesh, Stanya
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+        // --- THEME SWITCHER LOGIC ---
+        const themeToggleButton = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+        function updateThemeIcons() {
+            if (document.documentElement.classList.contains('dark')) {
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
+            } else {
+                darkIcon.classList.add('hidden');
+                lightIcon.classList.remove('hidden');
+            }
+        }
+        themeToggleButton.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const newTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcons();
+        });
+        updateThemeIcons();
+
+        // --- APP STATE & NAVIGATION ---
+        const knowledgeBase = [
+            { title: "Best Practices for FICO Model 10T Analysis", content: "This document outlines the standard procedure for analyzing and validating the FICO 10T model outputs..." },
+            { title: "Regulatory Compliance Checklist (FCRA)", content: "A comprehensive checklist to ensure all credit reporting activities adhere to the Fair Credit Reporting Act..." }
+        ];
+        const views = document.querySelectorAll('.app-view');
+        const navButtons = document.querySelectorAll('.nav-btn');
+
+        function switchView(viewId) {
+            views.forEach(view => view.classList.toggle('active', view.id === `${viewId}-view`));
+            navButtons.forEach(btn => {
+                const isBtnActive = btn.dataset.view === viewId;
+                btn.classList.toggle('border-indigo-500', isBtnActive);
+                btn.classList.toggle('text-indigo-600', isBtnActive);
+                btn.classList.toggle('dark:text-indigo-400', isBtnActive);
+                btn.classList.toggle('border-transparent', !isBtnActive);
+                btn.classList.toggle('text-slate-500', !isBtnActive);
+                btn.classList.toggle('dark:text-slate-400', !isBtnActive);
+            });
+            if (viewId === 'knowledge-base') {
+                renderKnowledgeBase();
+            }
+        }
+
+        navButtons.forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
+
+        // --- KNOWLEDGE BASE RENDERING ---
+        function renderKnowledgeBase() {
+            const kbList = document.getElementById('kb-list');
+            kbList.innerHTML = '';
+            if (knowledgeBase.length === 0) {
+                kbList.innerHTML = `<p class="text-slate-500 dark:text-slate-400">The knowledge base is empty. Complete a SECI cycle to add new knowledge.</p>`;
+                return;
+            }
+            knowledgeBase.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'p-4 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800/50';
+                div.innerHTML = `
+                    <h3 class="font-semibold text-lg text-slate-800 dark:text-slate-200">${item.title}</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">${item.content}</p>
+                `;
+                kbList.appendChild(div);
+            });
+        }
+
+        // --- SECI CYCLE LOGIC ---
+        const simulatorContainer = document.getElementById('simulator-view').querySelector('.space-y-8');
+        let currentCycle = {};
+
+        function startSECI() {
+            const tacitKnowledge = document.getElementById('tacit-input').value;
+            if (!tacitKnowledge) {
+                alert("Please enter a piece of tacit knowledge to begin.");
+                return;
+            }
+            currentCycle = {
+                tacit: tacitKnowledge,
+                discussion: [],
+                explicitTitle: "",
+                explicitContent: ""
+            };
+            renderPhase('socialization');
+        }
+
+        function renderPhase(phaseName) {
+            simulatorContainer.innerHTML = ''; // Clear previous phase
+            let phaseHTML = '';
+
+            switch (phaseName) {
+                case 'socialization':
+                    phaseHTML = `
+                        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                            <h2 class="text-xl font-semibold mb-2 text-indigo-500">S: Socialization (Tacit to Tacit)</h2>
+                            <p class="text-slate-600 dark:text-slate-400 mb-4">Share experiences related to the initial idea through informal dialogue.</p>
+                            <div class="bg-slate-100 dark:bg-slate-700/50 p-4 rounded-lg mb-4">
+                                <p class="font-semibold text-slate-800 dark:text-slate-200">Initial Idea:</p>
+                                <p class="italic text-slate-700 dark:text-slate-300">${currentCycle.tacit}</p>
+                            </div>
+                            <div id="discussion-log" class="space-y-2 mb-4 max-h-48 overflow-y-auto p-2 border rounded-md border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50"></div>
+                            <label class="font-medium text-sm text-slate-700 dark:text-slate-300">Your Contribution:</label>
+                            <textarea id="discussion-input" class="mt-1 w-full rounded-md bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 p-2" rows="2" placeholder="Add your experience or observation..."></textarea>
+                            <div class="flex gap-4 mt-4">
+                                <button onclick="addDiscussion()" class="flex-1 bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 text-slate-800 dark:text-slate-200 font-semibold py-2 px-4 rounded-lg">Add to Discussion</button>
+                                <button onclick="renderPhase('externalization')" class="flex-1 btn-gradient text-white font-bold py-2 px-4 rounded-lg">Articulate Findings</button>
+                            </div>
+                        </div>`;
+                    break;
+                case 'externalization':
+                     if (currentCycle.discussion.length === 0) {
+                        alert("Please add at least one point to the discussion before moving on.");
+                        return;
+                    }
+                    phaseHTML = `
+                        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                            <h2 class="text-xl font-semibold mb-2 text-indigo-500">E: Externalization (Tacit to Explicit)</h2>
+                            <p class="text-slate-600 dark:text-slate-400 mb-4">Articulate the shared tacit knowledge into a formal, explicit document.</p>
+                            <label class="font-medium text-sm text-slate-700 dark:text-slate-300">Document Title:</label>
+                            <input id="explicit-title-input" type="text" class="mt-1 mb-3 w-full rounded-md bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 p-2" placeholder="e.g., Best Practices for Client Onboarding">
+                            <label class="font-medium text-sm text-slate-700 dark:text-slate-300">Document Content:</label>
+                            <textarea id="explicit-content-input" class="mt-1 w-full rounded-md bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 p-2" rows="5" placeholder="Draft a formal finding, best practice, or process document..."></textarea>
+                            <button onclick="renderPhase('combination')" class="w-full btn-gradient text-white font-bold py-2 px-4 rounded-lg text-lg mt-4">Systematize Knowledge</button>
+                        </div>`;
+                    break;
+                 case 'combination':
+                    currentCycle.explicitTitle = document.getElementById('explicit-title-input').value;
+                    currentCycle.explicitContent = document.getElementById('explicit-content-input').value;
+                    if (!currentCycle.explicitTitle || !currentCycle.explicitContent) {
+                        alert("Please provide both a title and content for the document.");
+                        renderPhase('externalization'); // Go back
+                        return;
+                    }
+                     phaseHTML = `
+                        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                            <h2 class="text-xl font-semibold mb-2 text-indigo-500">C: Combination (Explicit to Explicit)</h2>
+                            <p class="text-slate-600 dark:text-slate-400 mb-4">The new explicit knowledge is now ready to be combined with the existing knowledge base.</p>
+                            <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 mb-4">
+                                <h3 class="font-semibold text-slate-800 dark:text-slate-200">${currentCycle.explicitTitle}</h3>
+                                <p class="italic text-sm mt-1 text-slate-600 dark:text-slate-400">${currentCycle.explicitContent}</p>
+                            </div>
+                            <button onclick="renderPhase('internalization')" class="w-full btn-gradient text-white font-bold py-2 px-4 rounded-lg text-lg mt-4">Add to Knowledge Base & Apply</button>
+                        </div>`;
+                    break;
+                case 'internalization':
+                    knowledgeBase.push({ title: currentCycle.explicitTitle, content: currentCycle.explicitContent });
+                    phaseHTML = `
+                        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 text-center">
+                            <h2 class="text-xl font-semibold mb-2 text-indigo-500">I: Internalization (Explicit to Tacit)</h2>
+                            <p class="text-slate-600 dark:text-slate-400 mb-4">The new knowledge is now part of the organizational memory. Embody it through practice.</p>
+                             <div class="bg-green-100 dark:bg-green-900/50 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 px-4 py-3 rounded-lg" role="alert">
+                                <strong class="font-bold">Success!</strong>
+                                <span class="block sm:inline">New knowledge has been added to the system.</span>
+                            </div>
+                            <button onclick="resetSimulator()" class="w-full max-w-xs mx-auto btn-gradient text-white font-bold py-2 px-4 rounded-lg text-lg mt-6">Start a New Knowledge Spiral</button>
+                        </div>`;
+                    break;
+            }
+            simulatorContainer.innerHTML = phaseHTML;
+            // Pre-fill discussion if returning to externalization
+            if(phaseName === 'externalization') {
+                document.getElementById('explicit-title-input').value = currentCycle.explicitTitle;
+                const contentInput = document.getElementById('explicit-content-input');
+                if(!currentCycle.explicitContent) {
+                     contentInput.value = `Based on the discussion about "${currentCycle.tacit}", the following points were raised:\n- ${currentCycle.discussion.join('\n- ')}\n\nTherefore, the recommended best practice is...`;
+                } else {
+                    contentInput.value = currentCycle.explicitContent;
+                }
+            }
+        }
+        
+        function addDiscussion() {
+            const input = document.getElementById('discussion-input');
+            if (input.value) {
+                currentCycle.discussion.push(input.value);
+                const log = document.getElementById('discussion-log');
+                const post = document.createElement('p');
+                post.className = 'text-sm p-2 bg-slate-200 dark:bg-slate-700 rounded-md text-slate-700 dark:text-slate-300';
+                post.textContent = input.value;
+                log.appendChild(post);
+                input.value = '';
+                log.scrollTop = log.scrollHeight;
+            }
+        }
+
+        function resetSimulator() {
+            simulatorContainer.innerHTML = `
+                <section id="phase-start" class="seci-phase active">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                        <h2 class="text-xl font-semibold mb-2 text-slate-900 dark:text-white">Start the Knowledge Spiral</h2>
+                        <p class="text-slate-600 dark:text-slate-400 mb-4">Begin with a single piece of unstated, personal knowledge (tacit knowledge). This could be an idea, an observation, or a gut feeling from a recent project.</p>
+                        <label for="tacit-input" class="font-medium text-sm text-slate-700 dark:text-slate-300">Your Tacit Knowledge Input:</label>
+                        <textarea id="tacit-input" class="mt-1 w-full rounded-md bg-slate-50 dark:bg-slate-700 border-slate-300 dark:border-slate-600 shadow-sm p-2" rows="3" placeholder="e.g., 'Our client onboarding feels too slow.'"></textarea>
+                        <button id="start-discussion-btn" onclick="startSECI()" class="w-full btn-gradient text-white font-bold py-2 px-4 rounded-lg text-lg mt-4">Start Discussion (Socialization)</button>
+                    </div>
+                </section>`;
+        }
+
+        // Initial setup
+        document.getElementById('start-discussion-btn').addEventListener('click', startSECI);
+    </script>
+</body>
+</html>

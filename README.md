@@ -1,69 +1,92 @@
-# BTAI-Fico-Score
+# BTAI — FICO Score & SECI Knowledge Cycle Simulators
 
-A collection of interactive simulations for credit scoring and knowledge management systems, developed as part of the BTAI initiatives.
+**Two browser-based teaching simulators built for Business Technology & AI coursework: an expert-system FICO scorer, and an interactive walkthrough of Nonaka's SECI knowledge-creation model.**
 
-## 🚀 Projects
+![HTML5](https://img.shields.io/badge/HTML5-orange)
+![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6%2B-yellow)
 
-This repository contains two primary simulation tools:
+## About
 
-### 1. FICO Score Simulator
+- **What:** A repository of two self-contained, single-page web simulations. The first reproduces FICO credit-score logic for sample applicants; the second steps a user through the four phases of the SECI knowledge-creation spiral.
+- **Who:** Group project by **Gyanesh Samanta** with teammates **Astha**, **Atish**, and **Stanya**.
+- **When:** First commit 2025-07-17, last update 2026-02-01.
+- **Where:** Built for the **BTAI (Business Technology & AI) club** as a coursework / educational deliverable.
+- **Why:** Both FICO scoring and the SECI knowledge cycle are easier to learn by watching the rules fire on real inputs than by reading a textbook chapter — so we wrapped each as an interactive sandbox.
 
-An expert system designed to evaluate financial data and calculate a credit score based on traditional FICO scoring logic.
+## The Story
 
-- **Location:** `simulations/fico-score-simulator/index.html`
-- **Features:**
-  - Dynamic score calculation based on payment history, utilization, history length, etc.
-  - Pre-defined applicant profiles (Priya, Rohan, Sunita).
-  - Detailed breakdown of score components.
-  - Dark/Light mode support.
+### FICO Score Simulator
 
-### 2. SECI Knowledge Cycle Simulator
+The FICO simulator is structured as a small **expert system**: it takes financial inputs (payment history, credit utilization, length of history, credit mix, new credit) and walks through the canonical FICO weighting to land on a final score, breaking down which components helped or hurt. Three pre-loaded personas — **Priya**, **Rohan**, and **Sunita** — give a fast way to see how very different financial behaviours land on the 300-850 scale, and a dark/light toggle keeps it readable in any lighting.
 
-An interactive tool that simulates the **Socialization, Externalization, Combination, and Internalization (SECI)** model of knowledge creation.
+### SECI Knowledge Cycle Simulator
 
-- **Location:** `simulations/seci-knowledge-cycle/index.html`
-- **Features:**
-  - Step-by-step walkthrough of the knowledge spiral.
-  - Interactive discussion logs for Socialization.
-  - Document drafting for Externalization.
-  - Persistent knowledge base updates.
+The SECI tool models Ikujiro Nonaka's organizational knowledge-creation spiral — **Socialization → Externalization → Combination → Internalization** — as a four-stage interactive flow. Users sit through a discussion log to capture tacit knowledge (Socialization), draft a document from it (Externalization), see it merged into a persistent knowledge base (Combination), and then re-apply it (Internalization). Each pass updates the knowledge base, so the loop tangibly *grows* something across iterations rather than just describing the theory.
 
-## 📂 Directory Structure
-
-```text
-BTAI-Fico-Score/
-├── simulations/
-│   ├── fico-score-simulator/
-│   │   └── index.html          # FICO Score Simulator App
-│   └── seci-knowledge-cycle/
-│       └── index.html          # SECI Knowledge Cycle App
-└── README.md
-```
-
-## 🛠️ Technologies Used
-
-- **HTML5/CSS3**
-- **JavaScript (ES6+)**
-- **Tailwind CSS** (via CDN)
-- **Google Fonts** (Inter)
-
-## 📖 How to Run
-
-Since these are self-contained web applications, you can run them simply by opening the `index.html` files in any modern web browser.
-
-1. Clone the repository.
-2. Navigate to the desired simulation folder.
-3. Open `index.html` in your browser.
-
-## 👥 Authors
-
-Made with ♥ by:
-
-- **Astha**
-- **Atish**
-- **Gyanesh**
-- **Stanya**
+Both apps are zero-dependency single HTML files — no build step, no backend, just open and run.
 
 ---
 
-_Developed for research and educational purposes._
+## Tech Stack
+
+- **Markup / Style:** HTML5, CSS3, **Tailwind CSS** (via CDN)
+- **Logic:** Vanilla JavaScript (ES6+)
+- **Typography:** Google Fonts (Inter)
+- **Hosting:** Any static file server / browser
+
+## Repo Structure
+
+```
+BTAI-Fico-Score/
+├── simulations/
+│   ├── fico-score-simulator/
+│   │   └── index.html        # expert-system FICO scorer
+│   └── seci-knowledge-cycle/
+│       └── index.html        # SECI 4-phase walkthrough
+└── README.md
+```
+
+## Getting Started
+
+No build tools, no install — just open the HTML files.
+
+```bash
+# 1. Clone
+git clone https://github.com/GyaneshSamanta/BTAI-Fico-Score.git
+cd BTAI-Fico-Score
+
+# 2. Open whichever simulator you want
+#    macOS / Linux
+open simulations/fico-score-simulator/index.html
+open simulations/seci-knowledge-cycle/index.html
+
+#    Windows
+start simulations/fico-score-simulator/index.html
+```
+
+Or serve the folder over a tiny local server if your browser blocks file:// fetches:
+
+```bash
+python -m http.server 8000
+# then visit http://localhost:8000/simulations/
+```
+
+## Contributing
+
+This is a coursework deliverable, but PRs that fix bugs, add personas, or extend the SECI knowledge base are welcome.
+
+## License
+
+Released for research and educational purposes. No formal OSS license has been published yet — please ask before commercial reuse.
+
+## Credits
+
+Made with care by:
+
+- **Astha**
+- **Atish**
+- **Gyanesh Samanta** ([@GyaneshSamanta](https://github.com/GyaneshSamanta))
+- **Stanya**
+
+Built for the BTAI initiative.
